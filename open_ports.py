@@ -50,7 +50,7 @@ else:
  
 # Make shodan query call
 api = shodan.Shodan(shodan_key)
-result = api.count("net:131.211.0.0/16", facets=[['port', 50]])
+result = api.count(IP_range, facets=[['port', 50]])
 count_ports = result['facets']['port']
 
 # count_ports is a list of dictionaries with count as key and ports as value
