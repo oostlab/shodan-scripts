@@ -50,7 +50,7 @@ else:
  
 # Make shodan query call
 api = shodan.Shodan(shodan_key)
-result = api.count(IP_range, facets=[['port', 50]])
+result = api.count("net:131.211.0.0/16", facets=[['port', 50]])
 count_ports = result['facets']['port']
 
 # count_ports is a list of dictionaries with count as key and ports as value
@@ -68,22 +68,26 @@ for port in all_ports:
     if str(port) in ref_ports.keys():
         if all_ports[port] == ref_ports[str(port)]:
             # port number and count are the same, no change
-            print('  port: {0:5} - count: {1:5} - ref count {2:5}'.format(port, all_ports[port], ref_ports[str(port)]))
+            print('  port: {0:5} - current: {1:5} - old {2:5}'.format(port, all_ports[port], ref_ports[str(port)]))
             # remove port from ref list, this way we check if a port is removed from the scan
             ref_ports.pop(str(port))
         else:
-            # Count is different
-            print('* port: {0:5} - count: {1:5} - ref count {2:5}'.format(port, all_ports[port], ref_ports[str(port)]))
+            # Count is different, more ports or less ports 
+            if all_ports[port] <  ref_ports[str(port)]:
+                print('- port: {0:5} - current: {1:5} - old {2:5}'.format(port, all_ports[port], ref_ports[str(port)]))
+            else: # More open ports
+                print('+ port: {0:5} - current: {1:5} - old {2:5}'.format(port, all_ports[port], ref_ports[str(port)]))
             # remove port from ref list, this way we check if a port is removed from the scan
             ref_ports.pop(str(port))
     else:
         # a new port is found
-        print('* port: {0:5} - count: {1:5}'.format(port, all_ports[port]))
+        print('+ port: {0:5} - current: {1:5}'.format(port, all_ports[port]))
 
 # check if there a less port found the in the reference file
 if len(ref_ports) != 0:
     # print all not found again port and values
     print('Ports removed from IP range')
     for port in ref_ports:
-        print('*  ref port: {0:5} - ref count: {1:5}'.format(port, ref_ports[str(port)]))
+        print('-  ref port: {0:5} - old: {1:5}'.format(port, ref_ports[str(port)]))
 
+save_list()
