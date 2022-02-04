@@ -17,16 +17,20 @@ def save_list():
         convert_file.write(json.dumps(all_ports))
 
 def load_list(filename):
-    # loads reference port dictionary from file
-    with open(filename) as f:
-        data = f.read()
-     
-    # reconstructing the data as a dictionary
-    return json.loads(data)
+     # loads reference port dictionary from file
+     try:
+         with open(filename) as f:
+             data = f.read()
+
+         # reconstructing the data as a dictionary
+         return json.loads(data)
+     except:
+         # file does not exists, return empty dictonairy
+         dataload = {}
+         return dataload
 
 # variable definition
 all_ports = {}
-
 
 print('*****************************************************')       
 print('* Shodan port scanner                               *')
@@ -50,7 +54,7 @@ else:
  
 # Make shodan query call
 api = shodan.Shodan(shodan_key)
-result = api.count("net:131.211.0.0/16", facets=[['port', 50]])
+result = api.count(IP_range, facets=[['port', 50]])
 count_ports = result['facets']['port']
 
 # count_ports is a list of dictionaries with count as key and ports as value
